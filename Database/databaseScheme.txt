@@ -1,0 +1,103 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema sql6457997
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema sql6457997
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `sql6457997` DEFAULT CHARACTER SET utf8 ;
+USE `sql6457997` ;
+
+-- -----------------------------------------------------
+-- Table `sql6457997`.`Assessment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sql6457997`.`Assessment` (
+  `assessID` INT NOT NULL,
+  `AssessmentTitle` VARCHAR(45) NOT NULL,
+  `Description` VARCHAR(150) NOT NULL,
+  PRIMARY KEY (`assessID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sql6457997`.`Questions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sql6457997`.`Questions` (
+  `questionNo` INT NOT NULL,
+  `questionText` VARCHAR(45) NOT NULL,
+  `Assessment_assessID` INT NOT NULL,
+  PRIMARY KEY (`questionNo`, `Assessment_assessID`),
+  INDEX `fk_Questions_Assessment1_idx` (`Assessment_assessID` ASC),
+  CONSTRAINT `fk_Questions_Assessment1`
+    FOREIGN KEY (`Assessment_assessID`)
+    REFERENCES `sql6457997`.`Assessment` (`assessID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sql6457997`.`Options`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sql6457997`.`Options` (
+  `optionNo` INT NOT NULL,
+  `optionText` VARCHAR(45) NOT NULL,
+  `Questions_questionNo` INT NOT NULL,
+  `Questions_Assessment_assessID` INT NOT NULL,
+  `correct` TINYINT NOT NULL,
+  `Optionscol` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`optionNo`, `Questions_questionNo`, `Questions_Assessment_assessID`, `correct`),
+  INDEX `fk_Options_Questions1_idx` (`Questions_questionNo` ASC, `Questions_Assessment_assessID` ASC),
+  CONSTRAINT `fk_Options_Questions1`
+    FOREIGN KEY (`Questions_questionNo` , `Questions_Assessment_assessID`)
+    REFERENCES `sql6457997`.`Questions` (`questionNo` , `Assessment_assessID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sql6457997`.`User`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sql6457997`.`User` (
+  `idUser` INT NOT NULL,
+  `username` VARCHAR(45) NULL,
+  `password` VARCHAR(45) NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idUser`),
+  UNIQUE INDEX `Usercol_UNIQUE` (`username` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `sql6457997`.`Attempts`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sql6457997`.`Attempts` (
+  `User_idUser` INT NOT NULL,
+  `Assessment_assessID` INT NOT NULL,
+  `Marks` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`User_idUser`, `Assessment_assessID`),
+  INDEX `fk_User_has_Assessment_Assessment1_idx` (`Assessment_assessID` ASC),
+  INDEX `fk_User_has_Assessment_User_idx` (`User_idUser` ASC),
+  CONSTRAINT `fk_User_has_Assessment_User`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `sql6457997`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_User_has_Assessment_Assessment1`
+    FOREIGN KEY (`Assessment_assessID`)
+    REFERENCES `sql6457997`.`Assessment` (`assessID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
